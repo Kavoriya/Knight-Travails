@@ -1,6 +1,8 @@
 class Node {
    constructor(value) { 
       this.value = value; 
+      this.visited = false;
+      this.prev = null;
    }
 
    addBranch(i) {
@@ -21,11 +23,57 @@ class Tree {
          node.addBranch(adjacencyList[root][i]);
       }
       for (let branch in node) {
-         if (branch == 'value') continue;
+         if (branch == 'value' || branch == 'prev'|| branch == 'visited') continue;
          node[branch] = this.buildTree(node[branch], adjacencyList);
       }
       
       return node;
+   }
+
+   find(value, node = this.root) {
+      node = structuredClone(node);
+      let queue = [];
+      let result = [];
+      queue.push(node);
+      while (queue[0].value != value) {
+         for (let branch in queue[0]) {
+            if (branch == 'value' || branch == 'prev'|| branch == 'visited') continue;
+            queue.push(queue[0][branch]);
+         }
+         result.push(queue[0].value);
+         queue.shift();
+      }
+      result.push(queue[0].value)
+      return result;
+   }
+
+   bfs(target) {
+      let queue = [];
+      this.root.visited = true;
+      queue.push(this.root);
+      while (queue.length != 0) {
+         let current = queue.shift();
+         for (let branch in current) {
+            if (branch == 'value' || branch == 'prev'|| branch == 'visited') continue;
+            if (!current[branch].visited) {
+               current[branch].visited = true;
+               queue.push(current[branch]);
+               current[branch].prev = current;
+            }
+            if (current[branch].value == target) {
+               return (this.traceRoute(current[branch]))
+            }
+         }
+      }
+   }
+
+   traceRoute(node) {
+      let trace = [];
+      while (node != null) {
+         trace.push(node);
+         node = node.prev;
+      }
+      return trace.reverse();
    }
 
    removeEdge(value, adjacencyList) {
@@ -116,4 +164,5 @@ class AdjacencyList {
 
 let adjacencyList = new AdjacencyList();
 let tree = new Tree(adjacencyList.adjacencyList);
+console.log(tree.bfs(12));
 console.log(tree);
