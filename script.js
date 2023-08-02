@@ -13,10 +13,10 @@ class Node {
 class Tree {
    constructor(adjacencyList) {
       this.adjacencyList = adjacencyList;
-      this.root = this.buildTree();
+      this.root = this.buildTree(0);
    }
 
-   buildTree(root = 0, adjacencyList = this.adjacencyList) {
+   buildTree(root, adjacencyList = this.adjacencyList) {
       let node = new Node(root);
       adjacencyList = this.removeEdge(root, adjacencyList);
       for (let i = 0; i < adjacencyList[root].length; i++) {
@@ -164,5 +164,5 @@ class AdjacencyList {
 
 let adjacencyList = new AdjacencyList();
 let tree = new Tree(adjacencyList.adjacencyList);
-console.log(tree.bfs(12));
+console.log(tree.bfs(2));
 console.log(tree);
